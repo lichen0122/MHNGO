@@ -40,11 +40,8 @@ function startCountdown_hunt() {
 	if (huntLocation != null)
 		distance = huntLocation.distanceTo(mov_marker.getLatLng()).toFixed(2);
 
-	console.log("startCountdown_hunt distance" + distance);
 	const requiredSeconds = Math.ceil(distance / 30);
 	var seconds = requiredSeconds - secondsPassed;
-
-	console.log("startCountdown_hunt" + seconds);
 
 	// 如果已經有計時器在運行，先清除它
 	if (countdown_hunt) {
@@ -862,6 +859,8 @@ function init_marker(latlng) {
 
 	mov_marker.on('move', function (event) {
 		set_marker_distance();
+		var positionB = mov_marker.getLatLng();
+		saveCoordinates(positionB.lat, positionB.lng);
 	});
 
 };
@@ -1048,16 +1047,44 @@ $('#mapProviderAlt').change(function () {
 	}
 });
 
+function saveCoordinates(latitude, longitude) {
+	document.cookie = "latitude=" + latitude + ";path=/";
+	document.cookie = "longitude=" + longitude + ";path=/";
+}
+
+
+function getCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for (var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+	}
+	return null;
+}
+
+
 // Initialise the map to the user's home country
 fetch('/home_country').then(function (e) {
 	return e.text()
 }).then(function (h) {
 	provider.search({ query: h }).then(function (r) {
-		var lat = 24.82594334344382;
-		var lng = 121.01243019104005;
+		var latitude = getCookie("latitude");
+		var longitude = getCookie("longitude");
 
-		map.setView([lat, lng], 18);
+		if (latitude && longitude) {
+		}
+		else {
+			latitude = 24.82594334344382;
+			longitude = 121.01243019104005;
+		}
 
-		init_marker([lat, lng]);
+
+		document.getElementById("back-coordinate").value = `${latitude}, ${longitude}`;
+
+		map.setView([latitude, longitude], 18);
+
+		init_marker([latitude, longitude]);
 	});
 });

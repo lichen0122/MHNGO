@@ -120,19 +120,19 @@ namespace MHNGO
             try {
                 if (Devices != null)
                     lock (Devices)
-                        Devices = DeviceInformation.GetDevices(false);
+                        Devices = DeviceInformation.GetDevices();
             }
             catch (Exception e) {
                 SetResponse(ctx, new {
                     error = e.Message
                 });
             }
-
+            
             // No devices could be read, sent error
             if (Devices == null) {
                 SetResponse(ctx, new {
                     error =
-                        "Unable to retrieve connected devices. Ensure iTunes is installed and can detect your device(s)."
+                        "請確保已安裝 iTunes"
                 });
             }
             else {
@@ -324,20 +324,27 @@ namespace MHNGO
                     lock (Devices)
                         device = Devices.FirstOrDefault(d => d.UDID == (string) data.udid);
 
-                    foreach (DeviceInformation Device in Devices)
+                    HashSet<string> processedUdids = new HashSet<string>();
+
+                    // USB 優先
+                    var filteredList = Devices
+                        // 將列表按 udid 分組
+                        .GroupBy(x => x.UDID)
+                        // 對每個組別選擇物件
+                        .Select(group =>
+                        {
+                            // 如果組內有任何 IsNetwork 為 True 的物件，則選擇它，否則選擇組內的任一物件
+                            return group.FirstOrDefault(x => !x.IsNetwork) ?? group.First();
+                        }).ToList();
+
+                    foreach (DeviceInformation Device in filteredList)
                     {
-                        if(!Device.ToString().Contains("[USB]"))
+                        if (processedUdids.Contains(Device.UDID))
                             continue;
 
                         Console.WriteLine($"{Device.ToString()}: {data.lat.ToString()} , {data.lng.ToString()}");
                         device = Device;
-                        // Check if we already have the dependencies
-                        /*if (device == null)
-                        {
-                            SetResponse(ctx,
-                                new { error = "Unable to find the specified device. Are you sure it is connected?" });
-                        }
-                        else*/
+
                         if (device != null)
                         {
                             try
@@ -356,9 +363,64 @@ namespace MHNGO
                                 // Ensure the developer image exists
                                 else if (DeveloperImageHelper.HasImageForDevice(device, out var p))
                                 {
-                                    device.EnableDeveloperMode(p);
+                                    //device.EnableDeveloperMode(p);
                                     device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
                                     SetResponse(ctx, new { success = true });
+                                    processedUdids.Add(Device.UDID);
+                                }
+                                else
+                                {
+                                    throw new Exception("The developer images for the specified device are missing.");
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                SetResponse(ctx, new { });
+                            }
+                        }
+                    }
+
+
+                    filteredList = Devices
+                        // 將列表按 udid 分組
+                        .GroupBy(x => x.UDID)
+                        // 對每個組別選擇物件
+                        .Select(group =>
+                        {
+                            // 如果組內有任何 IsNetwork 為 True 的物件，則選擇它，否則選擇組內的任一物件
+                            return group.FirstOrDefault(x => x.IsNetwork) ?? group.First();
+                        }).ToList();
+
+                    foreach (DeviceInformation Device in filteredList)
+                    {
+                        if (processedUdids.Contains(Device.UDID))
+                            continue;
+
+                        Console.WriteLine($"{Device.ToString()}: {data.lat.ToString()} , {data.lng.ToString()}");
+                        device = Device;
+
+                        if (device != null)
+                        {
+                            try
+                            {
+                                // Check if developer mode toggle is visible (on >= iOS 16)
+                                if (device.GetDeveloperModeToggleState() ==
+                                    DeviceInformation.DeveloperModeToggleState.Hidden)
+                                {
+                                    device.EnableDeveloperModeToggle();
+                                    SetResponse(ctx,
+                                        new
+                                        {
+                                            error = "Please turn on Developer Mode first via Settings >> Privacy & Security on your device."
+                                        });
+                                }
+                                // Ensure the developer image exists
+                                else if (DeveloperImageHelper.HasImageForDevice(device, out var p))
+                                {
+                                    //device.EnableDeveloperMode(p);
+                                    device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
+                                    SetResponse(ctx, new { success = true });
+                                    processedUdids.Add(Device.UDID);
                                 }
                                 else
                                 {
@@ -387,14 +449,26 @@ namespace MHNGO
 
                     dynamic data = JsonConvert.DeserializeObject<dynamic>(sr.ReadToEnd());
 
-                    lock (Devices)
+                    // USB 優先
+                    var filteredList = Devices
+                        // 將列表按 udid 分組
+                        .GroupBy(x => x.UDID)
+                        // 對每個組別選擇物件
+                        .Select(group =>
+                        {
+                            // 如果組內有任何 IsNetwork 為 True 的物件，則選擇它，否則選擇組內的任一物件
+                            return group.FirstOrDefault(x => !x.IsNetwork) ?? group.First();
+                        }).ToList();
+
+
+                    lock (filteredList)
                         device = Devices.FirstOrDefault(d => d.UDID == (string)data.udid);
 
 
-                    if (!device.ToString().Contains("[USB]"))
+                    if (device == null)
                         SetResponse(ctx, new { error = "請使用 USB 連結" });
 
-                    if (device != null)
+                    else
                     {
                         try
                         {
@@ -477,14 +551,12 @@ namespace MHNGO
                     // Check if we already have the dependencies
                     if (device == null) {
                         SetResponse(ctx,
-                            new {error = "Unable to find the specified device. Are you sure it is connected?"});
+                            new {error = "無法找到此設備: " + (string)data.udid + ", 請重新掃描設備 "});
                     }
                     else {
                         // Obtain the status of the depedencies
                         var hasDeps = DeveloperImageHelper.HasImageForDevice(device);
                         var verStr = DeveloperImageHelper.GetSoftwareVersion(device);
-
-
 
                         // Automatically start download if it's missing
                         if (!hasDeps) {

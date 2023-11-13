@@ -11,6 +11,7 @@ using iMobileDevice.iDevice;
 using iMobileDevice.Lockdown;
 using iMobileDevice.Plist;
 using iMobileDevice.PropertyListService;
+using System.Linq;
 
 
 namespace MHNGO {
@@ -296,7 +297,7 @@ namespace MHNGO {
             try {
                 // Get device handle
                 if (idevice.idevice_new_with_options(out deviceHandle, UDID, (int) (IsNetwork ? iDeviceOptions.LookupNetwork : iDeviceOptions.LookupUsbmux)) != iDeviceError.Success)
-                    throw new Exception("Unable to open device, is it connected?");
+                    throw new Exception("無法連接設備: " + Name + ", 請確認已連線");
 
                 // Get lockdownd handle
                 if (lockdown.lockdownd_client_new_with_handshake(deviceHandle, out lockdownHandle, "MHNGO") !=
@@ -347,7 +348,7 @@ namespace MHNGO {
             try {
                 // Get device handle
                 if (idevice.idevice_new_with_options(out deviceHandle, UDID, (int) (IsNetwork ? iDeviceOptions.LookupNetwork : iDeviceOptions.LookupUsbmux)) != iDeviceError.Success)
-                    throw new Exception("Unable to open device, is it connected?");
+                    throw new Exception("無法連接設備: " + Name + ", 請確認已連線");
 
                 // Get lockdownd handle
                 if (lockdown.lockdownd_client_new_with_handshake(deviceHandle, out lockdownHandle, "MHNGO") !=
@@ -542,6 +543,25 @@ namespace MHNGO {
                     idevice.idevice_device_list_extended_free(devListPtr);
             }
 
+
+
+            //var filteredList = devices
+            //    // 將列表按 udid 分組
+            //    .GroupBy(x => x.UDID)
+            //    // 對每個組別選擇物件
+            //    .Select(group =>
+            //    {
+            //        // 如果組內有任何 IsNetwork 為 True 的物件，則選擇它，否則選擇組內的任一物件
+            //        return group.FirstOrDefault(x => !x.IsNetwork) ?? group.First();
+            //    })
+            //    .ToList();
+
+            //foreach (DeviceInformation device in filteredList)
+            //{
+            //    Console.WriteLine(device.Name);
+            //    Console.WriteLine(device.UDID);
+            //    Console.WriteLine(device.IsNetwork);
+            //}
 
             return devices;
         }
