@@ -162,6 +162,27 @@ function showFirstCoordinateAndRemove() {
 }
 
 
+function getClosetBiome() {
+	var selectedBiome = document.getElementById('biome-select').value;
+
+	var lat = mov_marker.getLatLng().lat;
+	var lng = mov_marker.getLatLng().lng;
+
+	// Fetch the KML data from the backend
+	fetch(`http://localhost:5000/get_closet_biome?biome=${selectedBiome}&latitude=${lat}&longitude=${lng}`)
+		.then(response => response.text())
+		.then(coordinate => {
+			document.getElementById('query').value = coordinate; // 將其設定到標籤中
+
+			var parts = coordinate.split(',');
+
+			marker.setLatLng([parts[0].trim(), parts[1].trim()]);
+			map.setView([marker.getLatLng().lat, marker.getLatLng().lng], map.getZoom());
+
+		});
+
+}
+
 
 // Set progress on progress modal
 function setDownloadProgress(fileName, progress) {
@@ -273,8 +294,14 @@ $('#refresh').click(function () {
 			$('#device').empty();
 			for (var i = 0; i < devices.length; i++)
 				$('#device').append($('<option></option>').text(devices[i].display_name).attr('data-udid', devices[i].udid));
-			if (devices.length)
+			if (devices.length) {
 				$('#stop-location').removeAttr('disabled');
+				var alert_message = "\n\n";
+				alert_message += "!!! 請注意: 請先選擇設備後按下 開發者模式 按鈕, 並確認開啟後再繼續 !!!\n";
+				alert_message += "!!! 請注意: 開始遊玩前請先將標記點移動至您現在手機的定位位置 !!!\n";
+				alert_message += "!!! 請注意: 雙擊可指定紅色標記點位置, 用拖曳的也可以 !!!";
+				alert(alert_message);
+			}
 			else
 				$('#stop-location').attr('disabled', true);
 			if (marker) {
@@ -906,11 +933,13 @@ map.on('dblclick', function (e) {
 });
 
 var runLayer = null;
+var parsed_kmlData = null;
 map.on('moveend', function () {
 	// Get the current map bounds
 	var bounds = map.getBounds();
 	var ne = bounds.getNorthEast();
 	var sw = bounds.getSouthWest();
+	
 
 	// Fetch the KML data from the backend
 	fetch(`http://localhost:5000/get_kml?sw_lat=${sw.lat}&sw_lng=${sw.lng}&ne_lat=${ne.lat}&ne_lng=${ne.lng}`)
@@ -923,9 +952,19 @@ map.on('moveend', function () {
 					map.removeLayer(runLayer);
 				}
 
-				// 使用 leaflet-omnivore 加載本地端的 KML 檔案
-				runLayer = omnivore.kml.parse(kmlData).addTo(map);
+				parsed_kmlData = omnivore.kml.parse(kmlData);
+				runLayer = parsed_kmlData.addTo(map);
 
+				//console.log(parsed_kmlData);
+				//
+				//const entries = Object.entries(parsed_kmlData._layers);
+				//console.log(entries);
+
+				//parsed_kmlData.forEach(item => {
+				//	console.log(item);
+				//});
+
+				
 				runLayer.eachLayer(function (layer) {
 
 					const styleUrl = layer.feature.properties.styleUrl;
@@ -1086,5 +1125,7 @@ fetch('/home_country').then(function (e) {
 		map.setView([latitude, longitude], 18);
 
 		init_marker([latitude, longitude]);
+
+		alert("!!! 請注意: 請先按下掃描設備按鈕 !!!");
 	});
 });

@@ -76,12 +76,18 @@
 					</div>
 				</div>
 				<div class="mb-3">
-					<textarea class="form-control" id="inputText" rows="6" style="font-weight: bold;" placeholder="貼上 Line 聊天紀錄..."></textarea>
+					<textarea class="form-control" id="inputText" rows="6" style="font-weight: bold;" placeholder="複製並貼上 Line 完整聊天紀錄..."></textarea>
 				</div>
 				<div class="mb-3">
-					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="extractCoordinates()">過濾聊天紀錄中</button>
-					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="showFirstCoordinateAndRemove()">提取至座標一號</button>
+					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="extractCoordinates()">過濾聊天紀錄</button>
+					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="showFirstCoordinateAndRemove()">提取第一筆至座標Ｂ點</button>
 					<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					<select class="custom-select" id="biome-select" style="width:100px">
+						<option value="Forest">森林</option>
+						<option value="Swamp">沼澤</option>
+						<option value="Desert">沙漠</option>
+					</select>
+					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="getClosetBiome()">找東南最近的</button>
 				</div>
 			</div>
 			<div class="mb-3" style="padding-left: 15px; padding-right: 15px; ">
@@ -141,7 +147,7 @@
 				</div>
 				<div class="mb-3">
 					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標一號:</span>
+						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ｂ點:</span>
 						<div class="col align-items-center">
 							<input type="text" class="form-control" id="query" style="font-weight: bold;">
 						</div>
@@ -154,7 +160,7 @@
 				</div>
 				<div class="mb-3">
 					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標二號:</span>
+						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ａ點:</span>
 						<div class="col align-items-center">
 							<input type="text" class="form-control" id="back-coordinate" value="24.82594334344382, 121.01243019104005" style="font-weight: bold;">
 						</div>
