@@ -1001,6 +1001,28 @@ map.on('moveend', function () {
 		});
 });
 
+function updateSelectStyle() {
+	element = document.getElementById('biome-select')
+	var selectedValue = element.value;
+	  
+	if (selectedValue === 'Forest') {
+		element.style.backgroundColor = '#548C00';
+		element.style.color = 'white';
+	} else if (selectedValue === 'Swamp') {
+		element.style.backgroundColor = '#8080C0';
+		element.style.color = 'white';
+		} else if (selectedValue === 'Desert') {
+		element.style.backgroundColor = '#FFE66F';
+		element.style.color = 'black';
+	} else {
+		element.style.backgroundColor = 'transparent';
+	}
+}
+
+updateSelectStyle();
+document.getElementById('biome-select').addEventListener('change', function () {
+  updateSelectStyle();
+});
 
 
 $('#mark-last-coordinate').click(function () {
