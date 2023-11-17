@@ -14,7 +14,7 @@
     <style>
         #map {
             width: 100%;
-            height: 600px;
+            height: 900px;
         }
         .city-label {
             background-color: white;
@@ -29,6 +29,13 @@
     <div id="map"></div>
 
     <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+            }).catch(function(error) {
+                console.error('複製時發生錯誤:', error);
+            });
+        }
+
         // 初始化地圖
         var map = L.map('map').setView([20, 0], 2);
 
@@ -39,59 +46,7 @@
         }).addTo(map);
 
         // 定義城市資料
-        var cities = cities = [
-
-			{"name": "Nuuk (UTC-3)", "coordinates": [64.1835, -51.7216]},
-
-			{"name": "Nuku'alofa (UTC-11)", "coordinates": [14.2766, -170.7020]},
-
-			{"name": "Honolulu (UTC-10)", "coordinates": [21.3069, -157.8583]},
-
-			{"name": "Anchorage (UTC-9)", "coordinates": [61.2181, -149.9003]},
-
-			{"name": "Los Angeles (UTC-8)", "coordinates": [34.0522, -118.2437]},
-
-			{"name": "Phoenix (UTC-7)", "coordinates": [33.4484, -112.0740]},
-
-			{"name": "Mexico City (UTC-6)", "coordinates": [19.4326, -99.1332]},
-
-			{"name": "New York City (UTC-5)", "coordinates": [40.7128, -74.0060]},
-
-			{"name": "Santiago (UTC-4)", "coordinates": [-33.4489, -70.6693]},
-
-			{"name": "Buenos Aires (UTC-3)", "coordinates": [-34.6037, -58.3816]},
-
-			{"name": "South Georgia (UTC-2)", "coordinates": [-54.4296, -36.5879]},
-
-			{"name": "Azores (UTC-1)", "coordinates": [37.7412, -25.6756]},
-
-			{"name": "London (UTC±0)", "coordinates": [51.5074, -0.1278]},
-
-			{"name": "Paris (UTC+1)", "coordinates": [48.8566, 2.3522]},
-
-			{"name": "Cairo (UTC+2)", "coordinates": [30.0444, 31.2357]},
-
-			{"name": "Moscow (UTC+3)", "coordinates": [55.7558, 37.6173]},
-
-			{"name": "Dubai (UTC+4)", "coordinates": [25.276987, 55.296249]},
-
-			{"name": "Tashkent (UTC+5)", "coordinates": [41.2995, 69.2401]},
-
-			{"name": "Almaty (UTC+6)", "coordinates": [43.2220, 76.8512]},
-
-			{"name": "Bangkok (UTC+7)", "coordinates": [13.7563, 100.5018]},
-
-			{"name": "Beijing (UTC+8)", "coordinates": [39.9042, 116.4074]},
-
-			{"name": "Tokyo (UTC+9)", "coordinates": [35.6895, 139.6917]},
-
-			{"name": "Sydney (UTC+10)", "coordinates": [-33.8688, 151.2093]},
-
-			{"name": "Noumea (UTC+11)", "coordinates": [-22.2558, 166.4505]},
-
-			{"name": "Auckland (UTC+12)", "coordinates": [-36.8485, 174.7633]}
-
-		];
+        var cities = cities = [{'name': '貝克島(UTC-12)', 'coordinates': [-0.516667, 166.933333]}, {'name': '巴哥巴哥(UTC-11)', 'coordinates': [4.916667, -52.333333]}, {'name': '夏威夷(UTC-10)', 'coordinates': [21.469444, -155.844417]}, {'name': '阿圖奧納(UTC-9.5)', 'coordinates': [-14.273333, -170.700556]}, {'name': '里基泰阿(UTC-9)', 'coordinates': [-21.200001, -159.775006]}, {'name': '舊金山(UTC-8)', 'coordinates': [37.774929, -122.419416]}, {'name': '阿爾伯克基(UTC-7)', 'coordinates': [35.084386, -106.650422]}, {'name': '芝加哥(UTC-6)', 'coordinates': [41.878114, -87.629798]}, {'name': '紐約(UTC-5)', 'coordinates': [40.712775, -74.005973]}, {'name': '哈利法克斯(UTC-4)', 'coordinates': [44.648862, -63.575328]}, {'name': '聖約翰斯(UTC-3.5)', 'coordinates': [47.561511, -52.712909]}, {'name': '布宜諾斯艾利斯(UTC-3)', 'coordinates': [-34.603684, -58.381559]}, {'name': '努克(UTC-2)', 'coordinates': [-64.273889, -56.2975]}, {'name': '斯科斯比鬆(UTC-1)', 'coordinates': [46.13511, -60.194722]}, {'name': '倫敦(UTC+0)', 'coordinates': [51.50853, -0.125487]}, {'name': '維也納(UTC+1)', 'coordinates': [48.208174, 16.373819]}, {'name': '赫爾辛基(UTC+2)', 'coordinates': [60.169857, 24.938379]}, {'name': '安卡拉(UTC+3)', 'coordinates': [39.933363, 32.859742]}, {'name': '德黑蘭(UTC+3.5)', 'coordinates': [35.696111, 51.423056]}, {'name': '杜拜(UTC+4)', 'coordinates': [25.204849, 55.270783]}, {'name': '喀布爾(UTC+4.5)', 'coordinates': [34.516667, 69.183333]}, {'name': '古吉蘭瓦拉(UTC+5)', 'coordinates': [28.613939, 77.209021]}, {'name': '新德里(UTC+5.5)', 'coordinates': [28.613939, 77.209021]}, {'name': '達卡(UTC+6)', 'coordinates': [23.810332, 90.412518]}, {'name': '仰光(UTC+6.5)', 'coordinates': [16.805469, 96.156194]}, {'name': '雅加達(UTC+7)', 'coordinates': [-6.208763, 106.845599]}, {'name': '台灣(UTC+8)', 'coordinates': [23.69781, 120.960515]}, {'name': '東京(UTC+9)', 'coordinates': [35.689487, 139.691706]}, {'name': '北領地(UTC+9.5)', 'coordinates': [-12.463439, 130.845642]}, {'name': '布里斯班(UTC+10)', 'coordinates': [-27.470125, 153.023449]}, {'name': '阿德萊德(UTC+10.5)', 'coordinates': [-34.92873, 138.600739]}, {'name': '首都領地(UTC+11)', 'coordinates': [-35.3075, 149.1244]}, {'name': '蘇瓦(UTC+12)', 'coordinates': [-13.508571, -172.104629]}, {'name': '奧克蘭(UTC+13)', 'coordinates': [-36.848459, 174.763332]}, {'name': '基里巴斯(UTC+14)', 'coordinates': [1.417, 173.0665]}];
 
         // 為每個城市添加標記和標籤
         cities.forEach(function(city) {
@@ -104,7 +59,9 @@
                 iconAnchor: [15, 0]
             });
 
-            L.marker(city.coordinates, {icon: customIcon}).addTo(map);
+            var m = L.marker(city.coordinates, {icon: customIcon}).addTo(map);
+            m.on('click', function(){ copyToClipboard(city.coordinates)})
+
         });
     </script>
 </body>
