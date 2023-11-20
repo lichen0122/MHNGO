@@ -1,22 +1,22 @@
-var countdown; // ¥Î¨Ó«O¦s­p®É¾¹IDªº¥ş§½ÅÜ¶q
+var countdown; // ç”¨ä¾†ä¿å­˜è¨ˆæ™‚å™¨IDçš„å…¨å±€è®Šé‡
 
 function startCountdown(value) {
-	// ¦pªG¤w¸g¦³­p®É¾¹¦b¹B¦æ¡A¥ı²M°£¥¦
+	// å¦‚æœå·²ç¶“æœ‰è¨ˆæ™‚å™¨åœ¨é‹è¡Œï¼Œå…ˆæ¸…é™¤å®ƒ
 	if (countdown) {
 		clearInterval(countdown);
-		countdown = null; // ²M°£­p®É¾¹«á±NÅÜ¶q­«¸m¬° null
+		countdown = null; // æ¸…é™¤è¨ˆæ™‚å™¨å¾Œå°‡è®Šé‡é‡ç½®ç‚º null
 	}
 
-	// ­pºâ¶Ç¤J­È°£¥H 30 ªºµ²ªG
+	// è¨ˆç®—å‚³å…¥å€¼é™¤ä»¥ 30 çš„çµæœ
 	var seconds = Math.ceil(value / 30);
 
 	function updateCountdown() {
 		if (seconds > 0) {
 			seconds--;
-			document.getElementById('countdownLabel').innerText = '­¸¦æ ' + value + ' ¤½¤Ø, §N«o¤¤: ' + seconds + ' ¬í';
+			document.getElementById('countdownLabel').innerText = 'é£›è¡Œ ' + value + ' å…¬å°º, å†·å»ä¸­: ' + seconds + ' ç§’';
 		} else {
 			clearInterval(countdown);
-			document.getElementById('countdownLabel').innerText = '­¸¦æ§N«o§¹²¦';
+			document.getElementById('countdownLabel').innerText = 'é£›è¡Œå†·å»å®Œç•¢';
 			countdown = null;
 		}
 	}
@@ -30,7 +30,7 @@ function startCountdown(value) {
 
 var huntLocation = null;
 var huntTimestamp;
-var countdown_hunt; // ¥Î¨Ó«O¦s­p®É¾¹IDªº¥ş§½ÅÜ¶q
+var countdown_hunt; // ç”¨ä¾†ä¿å­˜è¨ˆæ™‚å™¨IDçš„å…¨å±€è®Šé‡
 
 function startCountdown_hunt() {
 	const now = new Date();
@@ -43,18 +43,18 @@ function startCountdown_hunt() {
 	const requiredSeconds = Math.ceil(distance / 30);
 	var seconds = requiredSeconds - secondsPassed;
 
-	// ¦pªG¤w¸g¦³­p®É¾¹¦b¹B¦æ¡A¥ı²M°£¥¦
+	// å¦‚æœå·²ç¶“æœ‰è¨ˆæ™‚å™¨åœ¨é‹è¡Œï¼Œå…ˆæ¸…é™¤å®ƒ
 	if (countdown_hunt) {
 		clearInterval(countdown_hunt);
-		countdown_hunt = null; // ²M°£­p®É¾¹«á±NÅÜ¶q­«¸m¬° null
+		countdown_hunt = null; // æ¸…é™¤è¨ˆæ™‚å™¨å¾Œå°‡è®Šé‡é‡ç½®ç‚º null
 	}
 	function updateCountdownHunt() {
 		if (seconds > 0) {
 			seconds--;
-			document.getElementById('countdownHuntLabel').innerText = '¬¼Ây ' + distance + ' ¤½¤Ø, §N«o¤¤: ' + seconds + ' ¬í';
+			document.getElementById('countdownHuntLabel').innerText = 'ç‹©çµ ' + distance + ' å…¬å°º, å†·å»ä¸­: ' + seconds + ' ç§’';
 		} else {
 			clearInterval(countdown_hunt);
-			document.getElementById('countdownHuntLabel').innerText = '¬¼Ây§N«o§¹²¦';
+			document.getElementById('countdownHuntLabel').innerText = 'ç‹©çµå†·å»å®Œç•¢';
 			countdown_hunt = null;
 		}
 	}
@@ -74,70 +74,83 @@ function recordHunt() {
 
 
 
-// ¦¹¨ç¼Æ·|¦b«ö¤U"´£¨ú§¤¼Ğ"«ö¶s®É³Q½Õ¥Î
+// æ­¤å‡½æ•¸æœƒåœ¨æŒ‰ä¸‹"æå–åæ¨™"æŒ‰éˆ•æ™‚è¢«èª¿ç”¨
+//function extractCoordinates() {
+//	var inputTextElement = document.getElementById('inputText');
+//	var inputText = inputTextElement.value;
+//	// æ­£å‰‡è¡¨é”å¼ç”¨æ–¼åŒ¹é… GPS åæ¨™æ ¼å¼
+//	//var regex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+.*/g;
+//	//var regex = /(\d{2}:\d{2})\s+(.+?)\s+(-?\d+\.\d+),\s*(-?\d+\.\d+)(\s+|\n)/
+//	//var matches = inputText.match(regex);
+//
+//	// å°‡æ‰€æœ‰æ›è¡Œç¬¦è™Ÿæ›¿æ›ç‚ºç©ºæ ¼
+//	inputText = inputText.replace(/\n/g, ' ');
+//
+//	// æ­£å‰‡è¡¨é”å¼ä»¥åŒ¹é…24å°æ™‚åˆ¶æ™‚é–“æ ¼å¼ HH:mm
+//	const timeRegex = /(\b[0-2]?[0-9]:[0-5][0-9]\b)/g;
+//	const gpsRegex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+/;
+//
+//	// åˆ†å‰²æ–‡æœ¬
+//	let parts = inputText.split(timeRegex);
+//	let result = '';
+//
+//	for (let i = 0; i < parts.length; i++) {
+//		if (i % 2 === 0) {
+//			const gpsMatch = parts[i].match(gpsRegex);
+//			if (gpsMatch) {
+//				let startIndex = parts[i].indexOf(gpsMatch[0]);
+//				result += parts[i].substring(0, startIndex).replace(/[^\n]+/g, ' ') + gpsMatch[0];
+//				result += parts[i].substring(startIndex + gpsMatch[0].length);
+//			} else {
+//				result += parts[i];
+//			}
+//		} else {
+//			result += '\n' + parts[i];
+//		}
+//	}
+//
+//	result = result.trim();
+//
+//	// å°‡æ–‡æœ¬åˆ†å‰²æˆè¡Œ
+//	const lines = result.split('\n');
+//
+//	// éæ¿¾å‡ºç¬¦åˆæ¢ä»¶çš„è¡Œ
+//	const filteredLines = lines.filter(line => {
+//		const timeMatch = line.match(timeRegex);
+//		const gpsMatch = line.match(gpsRegex);
+//
+//		// ç¢ºä¿æ™‚é–“åœ¨è¡Œé¦–ï¼ŒGPSåº§æ¨™éš¨å¾Œ
+//		return timeMatch && gpsMatch && line.startsWith(timeMatch[0]);
+//	});
+//
+//	// å°‡éæ¿¾å¾Œçš„è¡Œåˆä½µç‚ºä¸€å€‹å­—ç¬¦ä¸²ä¸¦è¿”å›
+//	inputTextElement.value = filteredLines.join('\n');
+//
+//
+//	//inputTextElement.value = matches ? matches.join('\n') : ''; // å°‡æ‰€æœ‰åŒ¹é…çš„çµæœç›´æ¥æ›´æ–°åˆ°è¼¸å…¥æ¬„ä½ä¸­
+//}
+
 function extractCoordinates() {
 	var inputTextElement = document.getElementById('inputText');
 	var inputText = inputTextElement.value;
-	// ¥¿«hªí¹F¦¡¥Î©ó¤Ç°t GPS §¤¼Ğ®æ¦¡
-	//var regex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+.*/g;
-	//var regex = /(\d{2}:\d{2})\s+(.+?)\s+(-?\d+\.\d+),\s*(-?\d+\.\d+)(\s+|\n)/
-	//var matches = inputText.match(regex);
-
-	// ±N©Ò¦³´«¦æ²Å¸¹´À´«¬°ªÅ®æ
-	inputText = inputText.replace(/\n/g, ' ');
-
-	// ¥¿«hªí¹F¦¡¥H¤Ç°t24¤p®É¨î®É¶¡®æ¦¡ HH:mm
-	const timeRegex = /(\b[0-2]?[0-9]:[0-5][0-9]\b)/g;
 	const gpsRegex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+/;
 
-	// ¤À³Î¤å¥»
-	let parts = inputText.split(timeRegex);
-	let result = '';
+	const result = inputText.split('\n')
+		.filter(line => gpsRegex.test(line))
+		.join('\n');
 
-	for (let i = 0; i < parts.length; i++) {
-		if (i % 2 === 0) {
-			const gpsMatch = parts[i].match(gpsRegex);
-			if (gpsMatch) {
-				let startIndex = parts[i].indexOf(gpsMatch[0]);
-				result += parts[i].substring(0, startIndex).replace(/[^\n]+/g, ' ') + gpsMatch[0];
-				result += parts[i].substring(startIndex + gpsMatch[0].length);
-			} else {
-				result += parts[i];
-			}
-		} else {
-			result += '\n' + parts[i];
-		}
-	}
+	inputTextElement.value = result;
 
-	result = result.trim();
-
-	// ±N¤å¥»¤À³Î¦¨¦æ
-	const lines = result.split('\n');
-
-	// ¹LÂo¥X²Å¦X±ø¥óªº¦æ
-	const filteredLines = lines.filter(line => {
-		const timeMatch = line.match(timeRegex);
-		const gpsMatch = line.match(gpsRegex);
-
-		// ½T«O®É¶¡¦b¦æ­º¡AGPS®y¼ĞÀH«á
-		return timeMatch && gpsMatch && line.startsWith(timeMatch[0]);
-	});
-
-	// ±N¹LÂo«áªº¦æ¦X¨Ö¬°¤@­Ó¦r²Å¦ê¨Ãªğ¦^
-	inputTextElement.value = filteredLines.join('\n');
-
-
-	//inputTextElement.value = matches ? matches.join('\n') : ''; // ±N©Ò¦³¤Ç°tªºµ²ªGª½±µ§ó·s¨ì¿é¤JÄæ¦ì¤¤
 }
 
-// ¦¹¨ç¼Æ·|¦b«ö¤U"Åã¥Ü²Ä¤@¦æ§¤¼Ğ¨Ã²¾°£"«ö¶s®É³Q½Õ¥Î
+// æ­¤å‡½æ•¸æœƒåœ¨æŒ‰ä¸‹"é¡¯ç¤ºç¬¬ä¸€è¡Œåæ¨™ä¸¦ç§»é™¤"æŒ‰éˆ•æ™‚è¢«èª¿ç”¨
 function showFirstCoordinateAndRemove() {
 	var inputTextElement = document.getElementById('inputText');
 	var coordinates = inputTextElement.value.split('\n');
 	if (coordinates.length > 0) {
-		var firstCoordinate = coordinates.shift(); // ¨ú±o²Ä¤@¦æ§¤¼Ğ
+		var firstCoordinate = coordinates.shift(); // å–å¾—ç¬¬ä¸€è¡Œåæ¨™
 
-		inputTextElement.value = coordinates.join('\n'); // §ó·s¿é¤JÄæ¦ì¡A²¾°£²Ä¤@¦æ§¤¼Ğ
+		inputTextElement.value = coordinates.join('\n'); // æ›´æ–°è¼¸å…¥æ¬„ä½ï¼Œç§»é™¤ç¬¬ä¸€è¡Œåæ¨™
 
 		const regex = /-?\d{1,3}\.\d+,\s*-?\d{1,3}\.\d+/;
 		const match = firstCoordinate.match(regex);
@@ -148,7 +161,7 @@ function showFirstCoordinateAndRemove() {
 		else {
 			firstCoordinate = "";
 		}
-		document.getElementById('query').value = firstCoordinate; // ±N¨ä³]©w¨ì¼ĞÅÒ¤¤
+		document.getElementById('query').value = firstCoordinate; // å°‡å…¶è¨­å®šåˆ°æ¨™ç±¤ä¸­
 
 		var parts = firstCoordinate.split(',');
 
@@ -172,7 +185,7 @@ function getClosetBiome() {
 	fetch(`http://localhost:5000/get_closet_biome?biome=${selectedBiome}&latitude=${lat}&longitude=${lng}`)
 		.then(response => response.text())
 		.then(coordinate => {
-			document.getElementById('query').value = coordinate; // ±N¨ä³]©w¨ì¼ĞÅÒ¤¤
+			document.getElementById('query').value = coordinate; // å°‡å…¶è¨­å®šåˆ°æ¨™ç±¤ä¸­
 
 			var parts = coordinate.split(',');
 
@@ -297,9 +310,9 @@ $('#refresh').click(function () {
 			if (devices.length) {
 				$('#stop-location').removeAttr('disabled');
 				var alert_message = "\n\n";
-				alert_message += "!!! ½Ğª`·N: ½Ğ¥ı¿ï¾Ü³]³Æ«á«ö¤U ¶}µoªÌ¼Ò¦¡ «ö¶s, ¨Ã½T»{¶}±Ò«á¦AÄ~Äò !!!\n";
-				alert_message += "!!! ½Ğª`·N: ¶}©l¹Cª±«e½Ğ¥ı±N¼Ğ°OÂI²¾°Ê¦Ü±z²{¦b¤â¾÷ªº©w¦ì¦ì¸m !!!\n";
-				alert_message += "!!! ½Ğª`·N: ÂùÀ»¥i«ü©w¬õ¦â¼Ğ°OÂI¦ì¸m, ¥Î©ì¦²ªº¤]¥i¥H !!!";
+				alert_message += "!!! è«‹æ³¨æ„: è«‹å…ˆé¸æ“‡è¨­å‚™å¾ŒæŒ‰ä¸‹ é–‹ç™¼è€…æ¨¡å¼ æŒ‰éˆ•, ä¸¦ç¢ºèªé–‹å•Ÿå¾Œå†ç¹¼çºŒ !!!\n";
+				alert_message += "!!! è«‹æ³¨æ„: é–‹å§‹éŠç©å‰è«‹å…ˆå°‡æ¨™è¨˜é»ç§»å‹•è‡³æ‚¨ç¾åœ¨æ‰‹æ©Ÿçš„å®šä½ä½ç½® !!!\n";
+				alert_message += "!!! è«‹æ³¨æ„: é›™æ“Šå¯æŒ‡å®šç´…è‰²æ¨™è¨˜é»ä½ç½®, ç”¨æ‹–æ›³çš„ä¹Ÿå¯ä»¥ !!!";
 				alert(alert_message);
 			}
 			else
@@ -388,7 +401,7 @@ function setLocation(dev, callback) {
 	shouldStop = false
 	function processCoordinate(coords, index) {
 		if (index >= coords.length || shouldStop) {
-			return;  // ¦pªG©Ò¦³§¤¼Ğ¤w³B²z¡A°h¥X
+			return;  // å¦‚æœæ‰€æœ‰åæ¨™å·²è™•ç†ï¼Œé€€å‡º
 		}
 
 		const coordinate = coords[index];
@@ -424,7 +437,7 @@ function setLocation(dev, callback) {
 		show_location();
 		console.log(`Coordinate ${index + 1}: Lat = ${coordinate[0]}, Lon = ${coordinate[1]}`);
 
-		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ¬í«á³B²z¤U¤@­Ó§¤¼Ğ
+		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ç§’å¾Œè™•ç†ä¸‹ä¸€å€‹åæ¨™
 	}
 
 	if (last_lat == -1 && last_lng == -1) {
@@ -457,7 +470,7 @@ function walk_to_location(dev, callback) {
 			last_lat = coords[index - 1][0];
 			last_lng = coords[index - 1][1];
 			stop_moving()
-			return;  // ¦pªG©Ò¦³§¤¼Ğ¤w³B²z¡A°h¥X
+			return;  // å¦‚æœæ‰€æœ‰åæ¨™å·²è™•ç†ï¼Œé€€å‡º
 		}
 
 		const coordinate = coords[index];
@@ -493,7 +506,7 @@ function walk_to_location(dev, callback) {
 		show_location();
 		console.log(`Coordinate ${index + 1}: Lat = ${coordinate[0]}, Lon = ${coordinate[1]}`);
 
-		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ¬í«á³B²z¤U¤@­Ó§¤¼Ğ
+		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ç§’å¾Œè™•ç†ä¸‹ä¸€å€‹åæ¨™
 	}
 
 	if (last_lat == -1 && last_lng == -1) {
@@ -518,7 +531,7 @@ function drive_to_location(dev, callback) {
 			last_lat = coords[index - 1][0];
 			last_lng = coords[index - 1][1];
 			stop_moving()
-			return;  // ¦pªG©Ò¦³§¤¼Ğ¤w³B²z¡A°h¥X
+			return;  // å¦‚æœæ‰€æœ‰åæ¨™å·²è™•ç†ï¼Œé€€å‡º
 		}
 
 		const coordinate = coords[index];
@@ -554,7 +567,7 @@ function drive_to_location(dev, callback) {
 		show_location();
 		console.log(`Coordinate ${index + 1}: Lat = ${coordinate[0]}, Lon = ${coordinate[1]}`);
 
-		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ¬í«á³B²z¤U¤@­Ó§¤¼Ğ
+		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ç§’å¾Œè™•ç†ä¸‹ä¸€å€‹åæ¨™
 	}
 
 	if (last_lat == -1 && last_lng == -1) {
@@ -579,7 +592,7 @@ function fly_to_location(dev, callback) {
 			last_lat = coords[index - 1][0];
 			last_lng = coords[index - 1][1];
 			stop_moving()
-			return;  // ¦pªG©Ò¦³§¤¼Ğ¤w³B²z¡A°h¥X
+			return;  // å¦‚æœæ‰€æœ‰åæ¨™å·²è™•ç†ï¼Œé€€å‡º
 		}
 
 		const coordinate = coords[index];
@@ -616,7 +629,7 @@ function fly_to_location(dev, callback) {
 		console.log(`Coordinate ${index + 1}: Lat = ${coordinate[0]}, Lon = ${coordinate[1]}`);
 
 
-		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ¬í«á³B²z¤U¤@­Ó§¤¼Ğ
+		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 ç§’å¾Œè™•ç†ä¸‹ä¸€å€‹åæ¨™
 	}
 
 	var labelValue = parseInt(document.getElementById('distance').innerText, 10);
@@ -726,20 +739,20 @@ function setAbsPosition(position) {
 function addItem(itemText) {
 	const select = document.getElementById("last-coordinate");
 
-	// ÀË¬d¬O§_¤w¦³ 30 ­Ó¿ï¶µ¡A­Y¦³«h²¾°£³ÌÂÂªº¿ï¶µ¡]³Ì¤U­±ªº¿ï¶µ¡^
+	// æª¢æŸ¥æ˜¯å¦å·²æœ‰ 30 å€‹é¸é …ï¼Œè‹¥æœ‰å‰‡ç§»é™¤æœ€èˆŠçš„é¸é …ï¼ˆæœ€ä¸‹é¢çš„é¸é …ï¼‰
 	if (select.options.length >= 30) {
 		select.removeChild(select.options[select.options.length - 1]);
 	}
 
-	// ³Ğ«Ø·s¿ï¶µ¤¸¯À
+	// å‰µå»ºæ–°é¸é …å…ƒç´ 
 	const option = document.createElement("option");
 	option.value = itemText;
 	option.text = itemText;
 
-	// ±N·s¿ï¶µ²K¥[¨ì¿ï³æªº³Ì³»ºİ
+	// å°‡æ–°é¸é …æ·»åŠ åˆ°é¸å–®çš„æœ€é ‚ç«¯
 	select.insertBefore(option, select.firstChild);
 
-	// ¹w³]¿ï¤¤³Ì·s²K¥[ªº¿ï¶µ
+	// é è¨­é¸ä¸­æœ€æ–°æ·»åŠ çš„é¸é …
 	select.selectedIndex = 1;
 }
 
@@ -990,7 +1003,7 @@ map.on('moveend', function () {
 						};
 					}
 
-					// ÀË¬d¬O§_¦³¥ô¦ó¼Ë¦¡»İ­nÀ³¥Î
+					// æª¢æŸ¥æ˜¯å¦æœ‰ä»»ä½•æ¨£å¼éœ€è¦æ‡‰ç”¨
 					if (Object.keys(styleToApply).length > 0) {
 						layer.setStyle(styleToApply);
 					}
@@ -1148,6 +1161,6 @@ fetch('/home_country').then(function (e) {
 
 		init_marker([latitude, longitude]);
 
-		alert("!!! ½Ğª`·N: ½Ğ¥ı«ö¤U±½´y³]³Æ«ö¶s !!!");
+		alert("!!! è«‹æ³¨æ„: è«‹å…ˆæŒ‰ä¸‹æƒæè¨­å‚™æŒ‰éˆ• !!!");
 	});
 });
