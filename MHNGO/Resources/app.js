@@ -75,59 +75,72 @@ function recordHunt() {
 
 
 // 此函數會在按下"提取坐標"按鈕時被調用
+//function extractCoordinates() {
+//	var inputTextElement = document.getElementById('inputText');
+//	var inputText = inputTextElement.value;
+//	// 正則表達式用於匹配 GPS 坐標格式
+//	//var regex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+.*/g;
+//	//var regex = /(\d{2}:\d{2})\s+(.+?)\s+(-?\d+\.\d+),\s*(-?\d+\.\d+)(\s+|\n)/
+//	//var matches = inputText.match(regex);
+//
+//	// 將所有換行符號替換為空格
+//	inputText = inputText.replace(/\n/g, ' ');
+//
+//	// 正則表達式以匹配24小時制時間格式 HH:mm
+//	const timeRegex = /(\b[0-2]?[0-9]:[0-5][0-9]\b)/g;
+//	const gpsRegex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+/;
+//
+//	// 分割文本
+//	let parts = inputText.split(timeRegex);
+//	let result = '';
+//
+//	for (let i = 0; i < parts.length; i++) {
+//		if (i % 2 === 0) {
+//			const gpsMatch = parts[i].match(gpsRegex);
+//			if (gpsMatch) {
+//				let startIndex = parts[i].indexOf(gpsMatch[0]);
+//				result += parts[i].substring(0, startIndex).replace(/[^\n]+/g, ' ') + gpsMatch[0];
+//				result += parts[i].substring(startIndex + gpsMatch[0].length);
+//			} else {
+//				result += parts[i];
+//			}
+//		} else {
+//			result += '\n' + parts[i];
+//		}
+//	}
+//
+//	result = result.trim();
+//
+//	// 將文本分割成行
+//	const lines = result.split('\n');
+//
+//	// 過濾出符合條件的行
+//	const filteredLines = lines.filter(line => {
+//		const timeMatch = line.match(timeRegex);
+//		const gpsMatch = line.match(gpsRegex);
+//
+//		// 確保時間在行首，GPS座標隨後
+//		return timeMatch && gpsMatch && line.startsWith(timeMatch[0]);
+//	});
+//
+//	// 將過濾後的行合併為一個字符串並返回
+//	inputTextElement.value = filteredLines.join('\n');
+//
+//
+//	//inputTextElement.value = matches ? matches.join('\n') : ''; // 將所有匹配的結果直接更新到輸入欄位中
+//}
+
 function extractCoordinates() {
 	var inputTextElement = document.getElementById('inputText');
 	var inputText = inputTextElement.value;
-	// 正則表達式用於匹配 GPS 坐標格式
-	//var regex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+.*/g;
-	//var regex = /(\d{2}:\d{2})\s+(.+?)\s+(-?\d+\.\d+),\s*(-?\d+\.\d+)(\s+|\n)/
-	//var matches = inputText.match(regex);
-
-	// 將所有換行符號替換為空格
-	inputText = inputText.replace(/\n/g, ' ');
-
-	// 正則表達式以匹配24小時制時間格式 HH:mm
-	const timeRegex = /(\b[0-2]?[0-9]:[0-5][0-9]\b)/g;
 	const gpsRegex = /-?\d+\.\d+\s*,\s*-?\d+\.\d+/;
 
-	// 分割文本
-	let parts = inputText.split(timeRegex);
-	let result = '';
+	const result = inputText.split('\n')
+		.filter(line => gpsRegex.test(line))
+		.join('\n');
 
-	for (let i = 0; i < parts.length; i++) {
-		if (i % 2 === 0) {
-			const gpsMatch = parts[i].match(gpsRegex);
-			if (gpsMatch) {
-				let startIndex = parts[i].indexOf(gpsMatch[0]);
-				result += parts[i].substring(0, startIndex).replace(/[^\n]+/g, ' ') + gpsMatch[0];
-				result += parts[i].substring(startIndex + gpsMatch[0].length);
-			} else {
-				result += parts[i];
-			}
-		} else {
-			result += '\n' + parts[i];
-		}
-	}
+	inputTextElement.value = result;
 
-	result = result.trim();
-
-	// 將文本分割成行
-	const lines = result.split('\n');
-
-	// 過濾出符合條件的行
-	const filteredLines = lines.filter(line => {
-		const timeMatch = line.match(timeRegex);
-		const gpsMatch = line.match(gpsRegex);
-
-		// 確保時間在行首，GPS座標隨後
-		return timeMatch && gpsMatch && line.startsWith(timeMatch[0]);
-	});
-
-	// 將過濾後的行合併為一個字符串並返回
-	inputTextElement.value = filteredLines.join('\n');
-
-
-	//inputTextElement.value = matches ? matches.join('\n') : ''; // 將所有匹配的結果直接更新到輸入欄位中
 }
 
 // 此函數會在按下"顯示第一行坐標並移除"按鈕時被調用
