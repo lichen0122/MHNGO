@@ -22,6 +22,7 @@ using System.Security.Cryptography;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace MHNGO
 {
@@ -116,34 +117,47 @@ namespace MHNGO
 
         [EndpointMethod("get_devices")]
         static void GetDevices(HttpListenerContext ctx) {
-            // Save current devices
-            try {
-                if (Devices != null)
-                    lock (Devices)
-                        Devices = DeviceInformation.GetDevices();
-            }
-            catch (Exception e) {
-                SetResponse(ctx, new {
-                    error = e.Message
-                });
-            }
+
+
+            using (var sr = new StreamReader(ctx.Request.InputStream, ctx.Request.ContentEncoding))
+            {
+                bool enable_wifi = false;
+                // Read the JSON body
+                dynamic data = JsonConvert.DeserializeObject<dynamic>(sr.ReadToEnd());
+                if (data.option == "enable_wifi")
+                {
+                    enable_wifi = true;
+                }
+
+                // Save current devices
+                try {
+                    if (Devices != null)
+                        lock (Devices)
+                            Devices = DeviceInformation.GetDevices(enable_wifi);
+                }
+                catch (Exception e) {
+                    SetResponse(ctx, new {
+                        error = e.Message
+                    });
+                }
             
-            // No devices could be read, sent error
-            if (Devices == null) {
-                SetResponse(ctx, new {
-                    error =
-                        "請確保已安裝 iTunes"
-                });
-            }
-            else {
-                // Write devices to output
-                SetResponse(ctx,
-                    Devices.Select(d => new {
-                        name = d.Name,
-                        display_name = d.ToString(),
-                        udid = d.UDID
-                    })
-                );
+                // No devices could be read, sent error
+                if (Devices == null) {
+                    SetResponse(ctx, new {
+                        error =
+                            "請確保已安裝 iTunes"
+                    });
+                }
+                else {
+                    // Write devices to output
+                    SetResponse(ctx,
+                        Devices.Select(d => new {
+                            name = d.Name,
+                            display_name = d.ToString(),
+                            udid = d.UDID
+                        })
+                    );
+                }
             }
         }
 
@@ -318,11 +332,13 @@ namespace MHNGO
                 using (var sr = new StreamReader(ctx.Request.InputStream, ctx.Request.ContentEncoding)) {
                     // Read the JSON body
                     dynamic data = JsonConvert.DeserializeObject<dynamic>(sr.ReadToEnd());
+                    /*
                     DeviceInformation device;
 
                     // Find the matching device udid
                     lock (Devices)
                         device = Devices.FirstOrDefault(d => d.UDID == (string) data.udid);
+                    */
 
                     HashSet<string> processedUdids = new HashSet<string>();
 
@@ -337,23 +353,21 @@ namespace MHNGO
                             return group.FirstOrDefault(x => !x.IsNetwork) ?? group.First();
                         }).ToList();
 
-                    foreach (DeviceInformation Device in filteredList)
+                    Parallel.ForEach(filteredList, Device =>
                     {
-                        if (processedUdids.Contains(Device.UDID))
-                            continue;
 
                         Console.WriteLine($"{Device.ToString()}: {data.lat.ToString()} , {data.lng.ToString()}");
-                        device = Device;
 
-                        if (device != null)
+                        if (Device != null)
                         {
                             try
                             {
+                                /*
                                 // Check if developer mode toggle is visible (on >= iOS 16)
-                                if (device.GetDeveloperModeToggleState() ==
+                                if (Device.GetDeveloperModeToggleState() ==
                                     DeviceInformation.DeveloperModeToggleState.Hidden)
                                 {
-                                    device.EnableDeveloperModeToggle();
+                                    Device.EnableDeveloperModeToggle();
                                     SetResponse(ctx,
                                         new
                                         {
@@ -361,10 +375,10 @@ namespace MHNGO
                                         });
                                 }
                                 // Ensure the developer image exists
-                                else if (DeveloperImageHelper.HasImageForDevice(device, out var p))
+                                else if (DeveloperImageHelper.HasImageForDevice(Device, out var p))
                                 {
                                     //device.EnableDeveloperMode(p);
-                                    device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
+                                    Device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
                                     SetResponse(ctx, new { success = true });
                                     processedUdids.Add(Device.UDID);
                                 }
@@ -372,15 +386,22 @@ namespace MHNGO
                                 {
                                     throw new Exception("The developer images for the specified device are missing.");
                                 }
+                                */
+                                Device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
+                                //SetResponse(ctx, new { success = true });
+                                processedUdids.Add(Device.UDID);
                             }
                             catch (Exception e)
                             {
-                                SetResponse(ctx, new { });
+                                Console.WriteLine("set_location got exception: " + e.Message);
+                                //SetResponse(ctx, new { });
                             }
                         }
-                    }
+
+                    });
 
 
+                    // --------------------------------------------- WIFI --------------------------------------------- //
                     filteredList = Devices
                         // 將列表按 udid 分組
                         .GroupBy(x => x.UDID)
@@ -391,48 +412,52 @@ namespace MHNGO
                             return group.FirstOrDefault(x => x.IsNetwork) ?? group.First();
                         }).ToList();
 
+                    Parallel.ForEach(filteredList, Device =>
+                    {
+                        Console.WriteLine($"{Device.ToString()}: {data.lat.ToString()} , {data.lng.ToString()}");
+
+                        if (Device != null)
+                        {
+                            try
+                            {
+                                Device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
+                                processedUdids.Add(Device.UDID);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("set_location got exception: " + e.Message);
+                            }
+                        }
+                    });
+
+
+                    /*
                     foreach (DeviceInformation Device in filteredList)
                     {
                         if (processedUdids.Contains(Device.UDID))
                             continue;
 
                         Console.WriteLine($"{Device.ToString()}: {data.lat.ToString()} , {data.lng.ToString()}");
-                        device = Device;
 
-                        if (device != null)
+                        if (Device != null)
                         {
                             try
                             {
-                                // Check if developer mode toggle is visible (on >= iOS 16)
-                                if (device.GetDeveloperModeToggleState() ==
-                                    DeviceInformation.DeveloperModeToggleState.Hidden)
-                                {
-                                    device.EnableDeveloperModeToggle();
-                                    SetResponse(ctx,
-                                        new
-                                        {
-                                            error = "Please turn on Developer Mode first via Settings >> Privacy & Security on your device."
-                                        });
-                                }
-                                // Ensure the developer image exists
-                                else if (DeveloperImageHelper.HasImageForDevice(device, out var p))
-                                {
-                                    //device.EnableDeveloperMode(p);
-                                    device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
-                                    SetResponse(ctx, new { success = true });
-                                    processedUdids.Add(Device.UDID);
-                                }
-                                else
-                                {
-                                    throw new Exception("The developer images for the specified device are missing.");
-                                }
+                                Device.SetLocation(new PointLatLng { Lat = data.lat, Lng = data.lng });
+                                //SetResponse(ctx, new { success = true });
+                                processedUdids.Add(Device.UDID);
                             }
                             catch (Exception e)
                             {
-                                SetResponse(ctx, new { error = e.Message });
+                                Console.WriteLine("set_location" + e.Message);
+                                //SetResponse(ctx, new { error = e.Message });
                             }
                         }
                     }
+                    */
+
+                    SetResponse(ctx, new { success = true });
+
                 }
             }
         }
@@ -757,6 +782,7 @@ namespace MHNGO
                     string path;
                     if (File.Exists(path = Path.Combine("Resources",
                         methodName.Replace('/', Path.DirectorySeparatorChar)))) {
+                        
                         ctx.Response.Headers["Content-Type"] = MimeTypes.GetMimeType(methodName);
                         using (var s = File.OpenRead(path))
                             s.CopyTo(ctx.Response.OutputStream);

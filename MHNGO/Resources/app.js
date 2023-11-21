@@ -8,7 +8,7 @@ function startCountdown(value) {
 	}
 
 	// 計算傳入值除以 30 的結果
-	var seconds = Math.ceil(value / 30);
+	var seconds = Math.ceil(value / 28);
 
 	function updateCountdown() {
 		if (seconds > 0) {
@@ -40,7 +40,7 @@ function startCountdown_hunt() {
 	if (huntLocation != null)
 		distance = huntLocation.distanceTo(mov_marker.getLatLng()).toFixed(2);
 
-	const requiredSeconds = Math.ceil(distance / 30);
+	const requiredSeconds = Math.ceil(distance / 28);
 	var seconds = requiredSeconds - secondsPassed;
 
 	// 如果已經有計時器在運行，先清除它
@@ -283,7 +283,20 @@ $('#show-location').click(function () {
 // Populate device list upon clicking refresh
 $('#refresh').click(function () {
 	var b = $(this).attr('disabled', true);
-	fetch('/get_devices').then(function (e) {
+
+	var checkbox = document.getElementById('enable-wifi-search');
+	var option_str = "disable_wifi";
+
+	if (checkbox.checked)
+		option_str = "enable_wifi";
+
+	fetch('/get_devices', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({ option: option_str })
+	}).then(function (e) {
 		return e.json()
 	}).then(function (r) {
 		b.removeAttr('disabled');
@@ -743,12 +756,96 @@ function addItem(itemText) {
 	select.selectedIndex = 1;
 }
 
+
+function pure_fly() {
+	var dev = devices[$('#device')[0].selectedIndex];
+	shouldStop = false
+	function processCoordinate(coords, index) {
+		if (index >= coords.length || shouldStop) {
+			last_lat = coords[index - 1][0];
+			last_lng = coords[index - 1][1];
+			stop_moving()
+			return;  // 如果所有坐標已處理，退出
+		}
+
+		const coordinate = coords[index];
+
+		fetch('/set_location', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ udid: dev.udid, lat: coordinate[0], lng: coordinate[1] })
+		}).then(function (e) {
+			return e.json();
+		}).then(function (r) {
+			if (r.error) {
+				showMessageModal(r.error);
+			} else {
+				$('#set-location').popover({
+					html: true,
+					content: 'Location has been succesfully set. Confirm using Maps or other apps.',
+					trigger: 'manual',
+					placement: 'bottom'
+				});
+				if (lt) clearTimeout(lt);
+				$('#set-location').popover('show');
+				lt = setTimeout(function () {
+					$('#set-location').popover('hide');
+				}, 7000);
+			}
+		});
+		mov_marker.setLatLng([coordinate[0], coordinate[1]]);
+		show_location();
+		console.log(`Coordinate ${index + 1}: Lat = ${coordinate[0]}, Lon = ${coordinate[1]}`);
+
+
+		setTimeout(() => processCoordinate(coords, index + 1), 1000);  // 1 秒後處理下一個坐標
+	}
+
+	var labelValue = parseInt(document.getElementById('distance').innerText, 10);
+
+
+	if (last_lat == -1 && last_lng == -1) {
+		let index = 0;
+		const coords = getIntermediateCoordinates(marker.getLatLng().lat, marker.getLatLng().lng, marker.getLatLng().lat, marker.getLatLng().lng, 10000000);
+		start_moving()
+		processCoordinate(coords, index);
+	}
+	else {
+		let index = 0;
+		const coords = getIntermediateCoordinates(last_lat, last_lng, marker.getLatLng().lat, marker.getLatLng().lng, 10000000);
+		start_moving()
+		processCoordinate(coords, index);
+	}
+
+	startCountdown(labelValue);
+	startCountdown_hunt();
+}
+// 綁定鍵盤事件
+document.addEventListener("keydown", function (event) {
+	if (event.key === "b") {
+		var coordinate = document.getElementById('back-coordinate').value
+		var parts = coordinate.split(',');
+
+		marker.setLatLng([parts[0].trim(), parts[1].trim()]);
+		map.setView([marker.getLatLng().lat, marker.getLatLng().lng], map.getZoom());
+		if (devices && devices.length) {
+			enableButtons();
+		}
+		pure_fly();
+	} else if (event.key === "f") {
+		pure_fly();
+	} else if (event.key === "n") {
+		showFirstCoordinateAndRemove();
+	}
+});
+
+
 document.querySelectorAll('.movefly').forEach(function (button) {
 	button.addEventListener('click', function () {
 		addItem(`${marker.getLatLng().lat}, ${marker.getLatLng().lng}`);
-
 		locationPerform($(this).attr('disabled', true), fly_to_location);
-
 	});
 });
 
@@ -809,6 +906,19 @@ document.querySelectorAll('.copy-corrdinate-ex').forEach(function (button) {
 
 	});
 });
+
+document.querySelectorAll('.paste-chat').forEach(function (button) {
+	button.addEventListener('click', async function pasteText() {
+		try {
+			const text = await navigator.clipboard.readText(); // Read the text from the clipboard
+			document.getElementById("inputText").value = text; // Paste the text into the input field
+		} catch (err) {
+			alert('Failed to read clipboard contents: ', err);
+		}
+	});
+});
+
+
 
 document.querySelectorAll('.paste-corrdinate-1').forEach(function (button) {
 	button.addEventListener('click', async function pasteText() {
@@ -1109,14 +1219,20 @@ $('#mapProviderAlt').change(function () {
 });
 
 function saveCoordinates(latitude, longitude) {
-	document.cookie = "latitude=" + latitude + ";path=/";
-	document.cookie = "longitude=" + longitude + ";path=/";
+	var date = new Date();
+	date.setTime(date.getTime() + (1 * 365 * 24 * 60 * 60 * 1000));
+	var expires = "expires=" + date.toUTCString();
+
+	document.cookie = "latitude=" + latitude   + ";" + expires + ";path=/";
+	document.cookie = "longitude=" + longitude + ";" + expires + ";path=/";
+	console.log(document.cookie);
 }
 
 
 function getCookie(name) {
 	var nameEQ = name + "=";
 	var ca = document.cookie.split(';');
+	console.log(ca);
 	for (var i = 0; i < ca.length; i++) {
 		var c = ca[i];
 		while (c.charAt(0) == ' ') c = c.substring(1, c.length);

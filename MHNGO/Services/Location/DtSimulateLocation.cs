@@ -33,12 +33,12 @@ namespace MHNGO.Services.Location
                 // Get device handle
                 var err = idevice.idevice_new_with_options(out deviceHandle, _device.UDID, (int) (_device.IsNetwork ? iDeviceOptions.LookupNetwork : iDeviceOptions.LookupUsbmux));
                 if (err != iDeviceError.Success)
-                    throw new Exception("Unable to connect to the device. Make sure it is connected.");
+                    throw new Exception("無法連接設備: " + _device.Name + ", 請確認已連線");
 
                 // Obtain a lockdown client handle
                 if (lockdown.lockdownd_client_new_with_handshake(deviceHandle, out lockdownHandle, "MHNGO") !=
                     LockdownError.Success)
-                    throw new Exception("Unable to connect to lockdownd.");
+                    throw new Exception("無法連接lockdown: " + _device.Name);
 
                 // Start the simulatelocation service
                 if (lockdown.lockdownd_start_service(lockdownHandle, "com.apple.dt.simulatelocation",
@@ -79,6 +79,15 @@ namespace MHNGO.Services.Location
                         service.service_send(serviceClientHandle, lng, (uint) lng.Length, ref sent) !=
                         ServiceError.Success) {
                         throw new Exception("Unable to send co-ordinates to device.");
+                    }
+                    else
+                    {
+                        string log = "";
+                        if (_device.IsNetwork)
+                            log = "WIFI";
+                        else
+                            log = "USB";
+                        Console.WriteLine(log + " Success: " + _device.Name);
                     }
                 }
             }

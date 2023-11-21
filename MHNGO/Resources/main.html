@@ -83,170 +83,175 @@
 							</select>
 						</div>
 						<div class="col-md-auto">
+							<input type="checkbox" id="enable-wifi-search">
+							<span id="enableWifiSearchLabel" style="text-align: center; font-weight: bold;">WIFI</span>
+						</div>
+						<div class="col-md-auto">
 							<button type="button" class="btn btn-dark pl-4 pr-4" id="refresh">掃描設備</button>
 							<button type="button" class="btn btn-dark pl-4 pr-4" id="enable-developer-mode">開發者模式</button>
 							<button type="button" class="btn btn-dark pl-4 pr-4" data-toggle="popover" id="show-location" enabled>現在位置</button>
 							<button type="button" class="btn btn-dark pl-4 pr-4 recordhunt" data-toggle="popover" id="record-hunt" enabled>狩獵完成</button>
-							<button type="button" class="btn btn-dark pl-4 pr-4" data-toggle="popover" id="show-abs-location" enabled>網路位置</button>
+							<!--<button type="button" class="btn btn-dark pl-4 pr-4" data-toggle="popover" id="show-abs-location" enabled>網路位置</button>-->
 							<button type="button" class="btn btn-dark pl-4 pr-4" data-toggle="popover" id="stop-location" disabled>休息</button>
 						</div>
 					</div>
-				</div>
-				<div class="mb-3">
-					<div class="row">
-						<div class="col">
-							<select class="custom-select w-100" id="biome-select">
-								<option value="Forest">森林</option>
-								<option value="Swamp">沼澤</option>
-								<option value="Desert" selected>沙漠</option>
-							</select>
-						</div>
-						<div class="col-md-auto">
-							<button type="button" class="btn btn-dark pl-4 pr-4" onclick="getClosetBiome(); ">從綠色標記點往東南搜尋最近的</button>
-							<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					</div>
+					<div class="mb-3">
+						<div class="row">
+							<div class="col">
+								<select class="custom-select w-100" id="biome-select">
+									<option value="Forest">森林</option>
+									<option value="Swamp">沼澤</option>
+									<option value="Desert" selected>沙漠</option>
+								</select>
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="btn btn-dark pl-4 pr-4" onclick="getClosetBiome(); ">從綠色標記點往東南搜尋最近的</button>
+								<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+							</div>
 						</div>
 					</div>
+					<div class="mb-3">
+						<textarea class="form-control" id="inputText" rows="5" style="font-weight: bold;" placeholder="複製並貼上 Line 完整聊天紀錄..."></textarea>
+					</div>
+					<div class="mb-3">
+						<button type="button" class="btn btn-dark pl-4 pr-4 paste-chat" onclick="paste-chat">貼上聊天紀錄</button>
+						<button type="button" class="btn btn-dark pl-4 pr-4" onclick="extractCoordinates()">過濾聊天紀錄</button>
+						<button type="button" class="btn btn-dark pl-4 pr-4" onclick="showFirstCoordinateAndRemove()">提取第一筆至座標Ｂ點</button>
+						<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					</div>
 				</div>
-				<div class="mb-3">
-					<textarea class="form-control" id="inputText" rows="5" style="font-weight: bold;" placeholder="複製並貼上 Line 完整聊天紀錄..."></textarea>
+				<div class="mb-3" style="padding-left: 15px; padding-right: 15px; ">
+					<div class="row" style="padding-bottom: 15px">
+						<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					</div>
+					<div class="row" style="padding-bottom: 15px">
+						<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movedrive" data-toggle="popover" id="drive-to-location" disabled>&#128656;</button>
+					</div>
+					<div class="row" style="padding-bottom: 15px">
+						<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movewalk" data-toggle="popover" id="walk-to-location" disabled>&#128692;</button>
+					</div>
+					<div class="row" style="padding-bottom: 15px">
+						<button type="button" class="btn btn-warning pl-4 pr-4 moveterminate" data-toggle="popover" id="terminate-journey" enabled>&#128683;</button>
+					</div>
 				</div>
-				<div class="mb-3">
-					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="extractCoordinates()">過濾聊天紀錄</button>
-					<button type="button" class="btn btn-dark pl-4 pr-4" onclick="showFirstCoordinateAndRemove()">提取第一筆至座標Ｂ點</button>
-					<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
-				</div>
-			</div>
-			<div class="mb-3" style="padding-left: 15px; padding-right: 15px; ">
-				<div class="row" style="padding-bottom: 15px">
-					<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
-				</div>
-				<div class="row" style="padding-bottom: 15px">
-					<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movedrive" data-toggle="popover" id="drive-to-location" disabled>&#128656;</button>
-				</div>
-				<div class="row" style="padding-bottom: 15px">
-					<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movewalk" data-toggle="popover" id="walk-to-location" disabled>&#128692;</button>
-				</div>
-				<div class="row" style="padding-bottom: 15px">
-					<button type="button" class="btn btn-warning pl-4 pr-4 moveterminate" data-toggle="popover" id="terminate-journey" enabled>&#128683;</button>
-				</div>
-			</div>
-			<div class="container">
+				<div class="container">
 
 
-				<div class="mb-3">
-					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">目的地座標(紅色標記):</span>
-						<div class="col align-items-center">
-							<input type="text" class="form-control" id="dest-location" disabled style="background-color: #c81212; font-weight: bold; color: #ffffff; ">
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">目的地座標(紅色標記):</span>
+							<div class="col align-items-center">
+								<input type="text" class="form-control" id="dest-location" disabled style="background-color: #c81212; font-weight: bold; color: #ffffff; ">
+							</div>
+							<div class="col align-items-center">
+								<button type="button" class="btn btn-danger pl-4 pr-4 copy-corrdinate-red" data-toggle="popover" id="copy-corrdinate-red" enabled>複製座標</button>
+
+							</div>
 						</div>
-						<div class="col align-items-center">
-							<button type="button" class="btn btn-danger pl-4 pr-4 copy-corrdinate-red" data-toggle="popover" id="copy-corrdinate-red" enabled>複製座標</button>
+					</div>
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">所在地座標(綠色標記):</span>
+							<div class="col align-items-center">
+								<input type="text" class="form-control" id="current-location" disabled style="background-color: green; font-weight: bold; color: #ffffff;">
+							</div>
+							<div class="col align-items-center">
+								<button type="button" class="btn btn-success pl-4 pr-4 copy-corrdinate-green" data-toggle="popover" id="copy-corrdinate-green" enabled>複製座標</button>
+							</div>
 
 						</div>
 					</div>
-				</div>
-				<div class="mb-3">
-					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">所在地座標(綠色標記):</span>
-						<div class="col align-items-center">
-							<input type="text" class="form-control" id="current-location" disabled style="background-color: green; font-weight: bold; color: #ffffff;">
-						</div>
-						<div class="col align-items-center">
-							<button type="button" class="btn btn-success pl-4 pr-4 copy-corrdinate-green" data-toggle="popover" id="copy-corrdinate-green" enabled>複製座標</button>
-						</div>
 
-					</div>
-				</div>
-
-				<div class="mb-3">
-					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">飛行紀錄:</span>
-						<div class="col align-items-center">
-							<select type="text" class="custom-select d-block w-100" id="last-coordinate" style="font-weight: bold;"> </select>
-						</div>
-						<div class="col-md-auto">
-							<button type="button" class="btn btn-secondary pl-4 pr-4 copy-corrdinate-ex" data-toggle="popover" id="copy-corrdinate-ex" enabled>複製座標</button>
-							<button type="button" class="btn btn-danger pl-4 pr-4" id="mark-last-coordinate">標記此處為目的地</button>
-							<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">飛行紀錄:</span>
+							<div class="col align-items-center">
+								<select type="text" class="custom-select d-block w-100" id="last-coordinate" style="font-weight: bold;"> </select>
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="btn btn-secondary pl-4 pr-4 copy-corrdinate-ex" data-toggle="popover" id="copy-corrdinate-ex" enabled>複製座標</button>
+								<button type="button" class="btn btn-danger pl-4 pr-4" id="mark-last-coordinate">標記此處為目的地</button>
+								<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="mb-3">
-					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ｂ點:</span>
-						<div class="col align-items-center">
-							<input type="text" class="form-control" id="query" style="font-weight: bold;">
-						</div>
-						<div class="col-md-auto">
-							<button type="button" class="btn btn-info pl-4 pr-4 paste-corrdinate-1" data-toggle="popover" id="paste-corrdinate-1" enabled>貼上座標</button>
-							<button type="button" class="btn btn-danger pl-4 pr-4" id="search">標記此處為目的地</button>
-							<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
-						</div>
-					</div>
-				</div>
-				<div class="mb-3">
-					<div class="row align-items-center">
-						<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ａ點:</span>
-						<div class="col align-items-center">
-							<input type="text" class="form-control" id="back-coordinate" value="24.82594334344382, 121.01243019104005" style="font-weight: bold;">
-						</div>
-						<div class="col-md-auto">
-							<button type="button" class="btn btn-info pl-4 pr-4 paste-corrdinate-2" data-toggle="popover" id="paste-corrdinate-2" enabled>貼上座標</button>
-							<button type="button" class="btn btn-danger pl-4 pr-4" id="go-back-to">標記此處為目的地</button>
-							<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ｂ點:</span>
+							<div class="col align-items-center">
+								<input type="text" class="form-control" id="query" style="font-weight: bold;">
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="btn btn-info pl-4 pr-4 paste-corrdinate-1" data-toggle="popover" id="paste-corrdinate-1" enabled>貼上座標</button>
+								<button type="button" class="btn btn-danger pl-4 pr-4" id="search">標記此處為目的地</button>
+								<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+							</div>
 						</div>
 					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="messageModal" class="modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title">MHN GO</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p></p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div id="downloadModal" class="modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-body">
-						<p></p>
-						<div class="progress">
-							<div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+					<div class="mb-3">
+						<div class="row align-items-center">
+							<span style="text-align: left; font-weight: bold; padding-right: 2px; padding-left: 15px;">座標Ａ點:</span>
+							<div class="col align-items-center">
+								<input type="text" class="form-control" id="back-coordinate" value="24.82594334344382, 121.01243019104005" style="font-weight: bold;">
+							</div>
+							<div class="col-md-auto">
+								<button type="button" class="btn btn-info pl-4 pr-4 paste-corrdinate-2" data-toggle="popover" id="paste-corrdinate-2" enabled>貼上座標</button>
+								<button type="button" class="btn btn-danger pl-4 pr-4" id="go-back-to">標記此處為目的地</button>
+								<button type="button" class="btn btn-warning pl-4 pr-4 movebutton movefly" data-toggle="popover" id="fly-to-location" disabled>&#128640;</button>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div id="aboutModal" class="modal" tabindex="-1" role="dialog">
-			<div class="modal-dialog modal-dialog-centered" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<p id="about"></p>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+			<div id="messageModal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">MHN GO</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p></p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<script src="app.js"></script>
-	</body>
-</html>
+			<div id="downloadModal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-body">
+							<p></p>
+							<div class="progress">
+								<div class="progress-bar" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="aboutModal" class="modal" tabindex="-1" role="dialog">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<p id="about"></p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script src="app.js"></script>
+		</body>
+	</html>
