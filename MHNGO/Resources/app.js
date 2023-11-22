@@ -837,21 +837,26 @@ function pure_fly() {
 }
 // ∏j©w¡‰ΩL®∆•Û
 document.addEventListener("keydown", function (event) {
-	if (event.key === "b") {
-		var coordinate = document.getElementById('back-coordinate').value
-		var parts = coordinate.split(',');
+	var button;
 
-		marker.setLatLng([parts[0].trim(), parts[1].trim()]);
-		map.setView([marker.getLatLng().lat, marker.getLatLng().lng], map.getZoom());
-		if (devices && devices.length) {
-			enableButtons();
-		}
-		pure_fly();
+	if (event.key === "b") {
+		button = document.getElementById('go-back-to');
+		button.click();
+		button = document.getElementById('fly-to-location');
+		button.click();
 	} else if (event.key === "f") {
-		pure_fly();
+		button = document.getElementById('fly-to-location');
+		button.click();
 	} else if (event.key === "n") {
-		showFirstCoordinateAndRemove();
+		button = document.getElementById('extract-first-location');
+		button.click();
 	}
+	else if (event.key === "u") {
+		button = document.getElementById('mark-last-coordinate');
+		button.click();
+	}
+	
+
 });
 
 
